@@ -16,6 +16,9 @@
 
 package io.vertx.junit5;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
@@ -36,11 +39,13 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @DisplayName("Integration tests")
 class IntegrationTest {
-
+	 private static final Logger LOGGER  = LoggerFactory.getLogger(IntegrationTest.class);
   static class HttpServerVerticle extends AbstractVerticle {
+	 
 
     @Override
     public void start(Promise<Void> startFuture) throws Exception {
+    	LOGGER.info("Test info");
       vertx.createHttpServer()
         .requestHandler(request -> request.response().end("Plop"))
         .listen(8080, ar -> {
@@ -61,7 +66,7 @@ class IntegrationTest {
     @DisplayName("Start a HTTP server")
     void start_http_server() throws InterruptedException {
       VertxTestContext testContext = new VertxTestContext();
-
+      LOGGER.info("Test info");
       Vertx vertx = Vertx.vertx();
       vertx.createHttpServer()
         .requestHandler(req -> req.response().end())
@@ -74,6 +79,7 @@ class IntegrationTest {
     @Test
     @DisplayName("Start a HTTP server, then issue a HTTP client request and check the response")
     void vertx_check_http_server_response() throws InterruptedException {
+    	
       Vertx vertx = Vertx.vertx();
       VertxTestContext testContext = new VertxTestContext();
 

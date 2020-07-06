@@ -51,7 +51,33 @@
     </dependencies>
   </dependencyManagement>
 
+<repositories>
+	<repository>
+		<id>qaprosoft_snapshots</id>
+		<name>Qaprosoft Snapshots</name>
+		<url>https://nexus.zebrunner.dev/repository/maven-snapshots/</url>
+		<releases>
+			<enabled>false</enabled>
+		</releases>
+		<snapshots>
+			<enabled>true</enabled>
+		</snapshots>
+	</repository>
+</repositories>
+
   <dependencies>
+
+	<dependency>
+		<groupId>com.zebrunner</groupId>
+		<artifactId>agent-junit5</artifactId>
+		<version>1.0.0.16-SNAPSHOT</version>
+	</dependency>
+	<dependency>
+		<groupId>ch.qos.logback</groupId>
+		<artifactId>logback-classic</artifactId>
+		<version>1.2.3</version>
+	</dependency>
+  
     <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-codegen</artifactId>

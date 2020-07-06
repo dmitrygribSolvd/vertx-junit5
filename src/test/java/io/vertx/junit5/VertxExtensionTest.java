@@ -17,6 +17,9 @@
 package io.vertx.junit5;
 
 import io.vertx.core.AbstractVerticle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.vertx.core.Vertx;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,6 +42,8 @@ import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass
  */
 @DisplayName("Tests of VertxExtension")
 class VertxExtensionTest {
+
+	private static final Logger LOGGER  = LoggerFactory.getLogger(VertxExtensionTest.class);
 
   @Nested
   @ExtendWith(VertxExtension.class)
@@ -91,6 +96,7 @@ class VertxExtensionTest {
     @DisplayName("Override a class-level timeout")
     @Timeout(value = 5, timeUnit = TimeUnit.SECONDS)
     void a(VertxTestContext context) throws InterruptedException {
+    	LOGGER.info("Test info");
       Thread.sleep(50);
       context.completeNow();
     }

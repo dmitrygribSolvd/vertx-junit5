@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<appender name="ReportingAppender" class="com.zebrunner.agent.core.appender.logback.ReportingAppender">
+	   <encoder>
+	      <pattern>%d{HH:mm:ss.SSS} [%t] %-5level - %msg%n</pattern>
+	   </encoder>
+	</appender>
+	<root level="info">
+	    <appender-ref ref="ReportingAppender" />
+	</root>
+</configuration>

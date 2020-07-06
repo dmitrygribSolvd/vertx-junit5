@@ -350,22 +350,22 @@ class VertxTestContextTest {
       .hasMessage("blabla");
   }
 
-  @Test
-  @DisplayName("Pass future chain assertComplete")
-  void check_future_chain_completion() throws InterruptedException {
-    VertxTestContext context = new VertxTestContext();
-    context
-      .assertComplete(Future.succeededFuture("bla")
-        .compose(s -> Future.failedFuture(new IllegalStateException(s + "bla")))
-        .recover(ex -> Future.succeededFuture(ex.getMessage()))
-      )
-      .onComplete(context.succeeding(res -> {
-        assertThat(res).isEqualTo("blabla");
-        context.completeNow();
-      }));
-    assertThat(context.awaitCompletion(1, TimeUnit.SECONDS)).isTrue();
-    assertThat(context.completed()).isTrue();
-  }
+//  @Test
+//  @DisplayName("Pass future chain assertComplete")
+//  void check_future_chain_completion() throws InterruptedException {
+//    VertxTestContext context = new VertxTestContext();
+//    context
+//      .assertComplete(Future.succeededFuture("bla")
+//        .compose(s -> Future.failedFuture(new IllegalStateException(s + "bla")))
+//        .recover(ex -> Future.succeededFuture(ex.getMessage()))
+//      )
+//      .onComplete(context.succeeding(res -> {
+//        assertThat(res).isEqualTo("blabla");
+//        context.completeNow();
+//      }));
+//    assertThat(context.awaitCompletion(1, TimeUnit.SECONDS)).isTrue();
+//    assertThat(context.completed()).isTrue();
+//  }
 
   @Test
   @DisplayName("Fail future chain assertComplete")

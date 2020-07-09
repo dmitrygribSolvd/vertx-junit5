@@ -38,109 +38,107 @@ import static org.assertj.core.api.Assertions.assertThat;
  * @author <a href="https://julien.ponge.org/">Julien Ponge</a>
  */
 @DisplayName("Integration tests")
-class IntegrationTest {
-	 private static final Logger LOGGER  = LoggerFactory.getLogger(IntegrationTest.class);
-  static class HttpServerVerticle extends AbstractVerticle {
-	 
+public class IntegrationTest {
+	private static final Logger LOGGER = LoggerFactory.getLogger(IntegrationTest.class);
 
-    @Override
-    public void start(Promise<Void> startFuture) throws Exception {
-    	LOGGER.info("Test info");
-      vertx.createHttpServer()
-        .requestHandler(request -> request.response().end("Plop"))
-        .listen(8080, ar -> {
-          if (ar.succeeded()) {
-            startFuture.complete();
-          } else {
-            startFuture.fail(ar.cause());
-          }
-        });
-    }
-  }
+	static class HttpServerVerticle extends AbstractVerticle {
 
-  @Nested
-  @DisplayName("Tests without parameter injection and explicit Vertx and VertxTestContext instances")
-  class Naked {
+		@Override
+		public void start(Promise<Void> startFuture) throws Exception {
+			LOGGER.info("Logback (org.slf4j): Test info at the beginning of the 'start' method, HttpServerVerticle class.");
+			vertx.createHttpServer().requestHandler(request -> request.response().end("Plop")).listen(8080, ar -> {
+				LOGGER.info("Logback (org.slf4j): Test info in the middle of the 'start' method, HttpServerVerticle class.");
+				if (ar.succeeded()) {
+					startFuture.complete();
+				} else {
+					startFuture.fail(ar.cause());
+				}
+			});
+			LOGGER.info("Logback (org.slf4j): Test info at the ending of the 'start' method, HttpServerVerticle class.");
+		}
+	}
 
-    @Test
-    @DisplayName("Start a HTTP server")
-    void start_http_server() throws InterruptedException {
-      VertxTestContext testContext = new VertxTestContext();
-      LOGGER.info("Test info");
-      Vertx vertx = Vertx.vertx();
-      vertx.createHttpServer()
-        .requestHandler(req -> req.response().end())
-        .listen(16969, testContext.succeeding(ar -> testContext.completeNow()));
+	@Nested
+	@DisplayName("Tests without parameter injection and explicit Vertx and VertxTestContext instances")
+	public class Naked {
 
-      assertThat(testContext.awaitCompletion(5, TimeUnit.SECONDS)).isTrue();
-      closeVertx(vertx);
-    }
+		@Test
+		@DisplayName("Start a HTTP server")
+		void start_http_server() throws InterruptedException {
+			LOGGER.info("Logback (org.slf4j): Test info at the beginning of the test.");
+			VertxTestContext testContext = new VertxTestContext();
+			Vertx vertx = Vertx.vertx();
+			vertx.createHttpServer().requestHandler(req -> req.response().end()).listen(16969,
+					testContext.succeeding(ar -> testContext.completeNow()));
+			LOGGER.info("Logback (org.slf4j): Test info in the middle of the test execution.");
+			assertThat(testContext.awaitCompletion(5, TimeUnit.SECONDS)).isTrue();
+			closeVertx(vertx);
+			LOGGER.info("Logback (org.slf4j): Test info at the ending of the test.");
+		}
 
-    @Test
-    @DisplayName("Start a HTTP server, then issue a HTTP client request and check the response")
-    void vertx_check_http_server_response() throws InterruptedException {
-    	
-      Vertx vertx = Vertx.vertx();
-      VertxTestContext testContext = new VertxTestContext();
+		@Test
+		@DisplayName("Start a HTTP server, then issue a HTTP client request and check the response")
+		void vertx_check_http_server_response() throws InterruptedException {
+			LOGGER.info("Logback (org.slf4j): Test info at the beginning of the test.");
+			Vertx vertx = Vertx.vertx();
+			VertxTestContext testContext = new VertxTestContext();
 
-      vertx.deployVerticle(new HttpServerVerticle(), testContext.succeeding(id -> {
-        HttpClient client = vertx.createHttpClient();
-        client.get(8080, "localhost", "/")
-          .flatMap(HttpClientResponse::body)
-          .onFailure(testContext::failNow)
-          .onSuccess(buffer -> testContext.verify(() -> {
-            assertThat(buffer.toString()).isEqualTo("Plop");
-            testContext.completeNow();
-          }));
-      }));
+			vertx.deployVerticle(new HttpServerVerticle(), testContext.succeeding(id -> {
+				HttpClient client = vertx.createHttpClient();
+				client.get(8080, "localhost", "/").flatMap(HttpClientResponse::body).onFailure(testContext::failNow)
+						.onSuccess(buffer -> testContext.verify(() -> {
+							LOGGER.info("Logback (org.slf4j): Test info in the middle of the test execution.");
+							assertThat(buffer.toString()).isEqualTo("Plop");
+							testContext.completeNow();
+						}));
+			}));
 
-      assertThat(testContext.awaitCompletion(5, TimeUnit.SECONDS)).isTrue();
-      closeVertx(vertx);
-    }
+			assertThat(testContext.awaitCompletion(5, TimeUnit.SECONDS)).isTrue();
+			closeVertx(vertx);
+			LOGGER.info("Logback (org.slf4j): Test info at the ending of the test.");
+		}
 
-    private void closeVertx(Vertx vertx) throws InterruptedException {
-      CountDownLatch latch = new CountDownLatch(1);
-      vertx.close(ar -> latch.countDown());
-      assertThat(latch.await(5, TimeUnit.SECONDS)).isTrue();
-    }
-  }
+		private void closeVertx(Vertx vertx) throws InterruptedException {
+			CountDownLatch latch = new CountDownLatch(1);
+			vertx.close(ar -> latch.countDown());
+			assertThat(latch.await(5, TimeUnit.SECONDS)).isTrue();
+		}
+	}
 
-  @Nested
-  @ExtendWith(VertxExtension.class)
-  @DisplayName("Tests with parameter injection")
-  class WithExtension {
+	@Nested
+	@ExtendWith(VertxExtension.class)
+	@DisplayName("Tests with parameter injection")
+	public class WithExtension {
 
-    @Test
-    @Timeout(10_000)
-    @DisplayName("Start a HTTP server, make 10 client requests, and use several checkpoints")
-    void start_and_request_http_server_with_checkpoints(Vertx vertx, VertxTestContext testContext) {
-      Checkpoint serverStarted = testContext.checkpoint();
-      Checkpoint requestsServed = testContext.checkpoint(10);
-      Checkpoint responsesReceived = testContext.checkpoint(10);
+		@Test
+		@Timeout(10_000)
+		@DisplayName("Start a HTTP server, make 10 client requests, and use several checkpoints")
+		void start_and_request_http_server_with_checkpoints(Vertx vertx, VertxTestContext testContext) {
+			LOGGER.info("Logback (org.slf4j): Test info at the beginning of the test.");
+			Checkpoint serverStarted = testContext.checkpoint();
+			Checkpoint requestsServed = testContext.checkpoint(10);
+			Checkpoint responsesReceived = testContext.checkpoint(10);
 
-      vertx.createHttpServer()
-        .requestHandler(req -> {
-          req.response().end("Ok");
-          requestsServed.flag();
-        })
-        .listen(8080, ar -> {
-          if (ar.failed()) {
-            testContext.failNow(ar.cause());
-          } else {
-            serverStarted.flag();
-          }
-        });
-
-      HttpClient client = vertx.createHttpClient();
-      for (int i = 0; i < 10; i++) {
-        client.get(8080, "localhost", "/")
-          .flatMap(HttpClientResponse::body)
-          .onFailure(testContext::failNow)
-          .onSuccess(buffer -> {
-            testContext.verify(() -> assertThat(buffer.toString()).isEqualTo("Ok"));
-            responsesReceived.flag();
-          });
-      }
-    }
-  }
+			vertx.createHttpServer().requestHandler(req -> {
+				req.response().end("Ok");
+				requestsServed.flag();
+			}).listen(8080, ar -> {
+				if (ar.failed()) {
+					testContext.failNow(ar.cause());
+				} else {
+					serverStarted.flag();
+				}
+			});
+			LOGGER.info("Logback (org.slf4j): Test info in the middle of the test execution.");
+			HttpClient client = vertx.createHttpClient();
+			for (int i = 0; i < 10; i++) {
+				client.get(8080, "localhost", "/").flatMap(HttpClientResponse::body).onFailure(testContext::failNow)
+						.onSuccess(buffer -> {
+							testContext.verify(() -> assertThat(buffer.toString()).isEqualTo("Ok"));
+							responsesReceived.flag();
+						});
+			}
+			LOGGER.info("Logback (org.slf4j): Test info at the ending of the test.");
+		}
+	}
 }

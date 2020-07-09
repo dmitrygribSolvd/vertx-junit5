@@ -20,6 +20,9 @@ import io.vertx.core.Vertx;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -27,52 +30,64 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @DisplayName("Test the injection in a complete lifecycle (esp., with @BeforeEach)")
 @ExtendWith(VertxExtension.class)
-class VertxExtensionCompleteLifecycleInjectionTest {
+public class VertxExtensionCompleteLifecycleInjectionTest {
 
-  static Vertx daVertx;
-  static VertxTestContext daContext;
+	private static final Logger LOGGER = LogManager.getLogger(VertxExtensionCompleteLifecycleInjectionTest.class);
 
-  @BeforeAll
-  static void inTheBeginning(Vertx vertx, VertxTestContext testContext) {
-    daVertx = vertx;
-    daContext = testContext;
-    testContext.completeNow();
-  }
+	static Vertx daVertx;
+	static VertxTestContext daContext;
 
-  @BeforeEach
-  void rightBefore(Vertx vertx, VertxTestContext testContext) {
-    assertThat(vertx).isSameAs(daVertx);
-    assertThat(testContext).isNotSameAs(daContext);
-    testContext.completeNow();
-  }
+	@BeforeAll
+	static void inTheBeginning(Vertx vertx, VertxTestContext testContext) {
+		LOGGER.info("Log4j2 (org.apache.logging.log4j): Test info in @BeforeAll.");
+		daVertx = vertx;
+		daContext = testContext;
+		testContext.completeNow();
+	}
 
-  @Test
-  @DisplayName("Check that the Vertx instance is shared and that VertxTestContext is fresh")
-  void test1(Vertx vertx, VertxTestContext testContext) {
-    assertThat(vertx).isSameAs(daVertx);
-    assertThat(testContext).isNotSameAs(daContext);
-    testContext.completeNow();
-  }
+	@BeforeEach
+	void rightBefore(Vertx vertx, VertxTestContext testContext) {
+		LOGGER.info("Log4j2 (org.apache.logging.log4j): Test info in @BeforeEach.");
+		assertThat(vertx).isSameAs(daVertx);
+		assertThat(testContext).isNotSameAs(daContext);
+		testContext.completeNow();
+	}
 
-  @Test
-  @DisplayName("Same test, same assumptions")
-  void test2(Vertx vertx, VertxTestContext testContext) {
-    assertThat(vertx).isSameAs(daVertx);
-    assertThat(testContext).isNotSameAs(daContext);
-    testContext.completeNow();
-  }
+	@Test
+	@DisplayName("Check that the Vertx instance is shared and that VertxTestContext is fresh")
+	void test1(Vertx vertx, VertxTestContext testContext) {
+		LOGGER.info("Log4j2 (org.apache.logging.log4j): Test info at the beginning of the test.");
+		assertThat(vertx).isSameAs(daVertx);
+		LOGGER.info("Log4j2 (org.apache.logging.log4j): Test info in the middle of the test execution.");
+		assertThat(testContext).isNotSameAs(daContext);
+		testContext.completeNow();
+		LOGGER.info("Log4j2 (org.apache.logging.log4j): Test info at the ending of the test.");
+	}
 
-  @AfterEach
-  void rightAfter(Vertx vertx, VertxTestContext testContext) {
-    assertThat(vertx).isSameAs(daVertx);
-    assertThat(testContext).isNotSameAs(daContext);
-    testContext.completeNow();
-  }
+	@Test
+	@DisplayName("Same test, same assumptions")
+	void test2(Vertx vertx, VertxTestContext testContext) {
+		LOGGER.info("Log4j2 (org.apache.logging.log4j): Test info at the beginning of the test.");
+		assertThat(vertx).isSameAs(daVertx);
+		LOGGER.info("Log4j2 (org.apache.logging.log4j): Test info in the middle of the test execution.");
+		assertThat(testContext).isNotSameAs(daContext);
+		testContext.completeNow();
+		LOGGER.info("Log4j2 (org.apache.logging.log4j): Test info at the ending of the test.");
+	}
 
-  @AfterAll
-  static void inTheEnd(Vertx vertx, VertxTestContext testContext) {
-    assertThat(vertx).isSameAs(daVertx);
-    assertThat(testContext).isNotSameAs(daContext);
-    testContext.completeNow();
-  }
+	@AfterEach
+	void rightAfter(Vertx vertx, VertxTestContext testContext) {
+		LOGGER.info("Log4j2 (org.apache.logging.log4j): Test info in @AfterEach.");
+		assertThat(vertx).isSameAs(daVertx);
+		assertThat(testContext).isNotSameAs(daContext);
+		testContext.completeNow();
+	}
+
+	@AfterAll
+	static void inTheEnd(Vertx vertx, VertxTestContext testContext) {
+		LOGGER.info("Log4j2 (org.apache.logging.log4j): Test info in @AfterAll.");
+		assertThat(vertx).isSameAs(daVertx);
+		assertThat(testContext).isNotSameAs(daContext);
+		testContext.completeNow();
+	}
 }

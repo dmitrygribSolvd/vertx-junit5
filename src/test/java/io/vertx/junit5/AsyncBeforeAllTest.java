@@ -16,6 +16,8 @@
 package io.vertx.junit5;
 
 import io.vertx.core.Vertx;
+
+import org.apache.log4j.Logger;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,46 +30,52 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(VertxExtension.class)
 @DisplayName("Test multiple @BeforeAll methods")
-class AsyncBeforeAllTest {
+public class AsyncBeforeAllTest {
 
-  private static boolean started1;
-  private static boolean started2;
-  private static final AtomicInteger count = new AtomicInteger();
+	private static final Logger LOGGER = Logger.getLogger(AsyncBeforeAllTest.class);
 
-  @BeforeAll
-  static void before1(VertxTestContext context, Vertx vertx) {
-    int c = count.get();
-    boolean s = started2;
-    if (c == 1) {
-      assertTrue(s);
-    }
-    Checkpoint checkpoint = context.checkpoint();
-    vertx.setTimer(20, id -> {
-      started1 = true;
-      count.incrementAndGet();
-      checkpoint.flag();
-    });
-  }
+	private static boolean started1;
+	private static boolean started2;
+	private static final AtomicInteger count = new AtomicInteger();
 
-  @BeforeAll
-  static void before2(VertxTestContext context, Vertx vertx) {
-    int c = count.get();
-    boolean s = started1;
-    if (c == 1) {
-      assertTrue(s);
-    }
-    Checkpoint checkpoint = context.checkpoint();
-    vertx.setTimer(20, id -> {
-      started2 = true;
-      count.incrementAndGet();
-      checkpoint.flag();
-    });
-  }
+	@BeforeAll
+	static void before1(VertxTestContext context, Vertx vertx) {
+		LOGGER.info("Log4j (org.apache.log4j.Logger): Test info in @BeforeAll before1.");
+		int c = count.get();
+		boolean s = started2;
+		if (c == 1) {
+			assertTrue(s);
+		}
+		Checkpoint checkpoint = context.checkpoint();
+		vertx.setTimer(20, id -> {
+			started1 = true;
+			count.incrementAndGet();
+			checkpoint.flag();
+		});
+	}
 
-  @Test
-  void check_async_before_completed() {
-    assertEquals(2, count.get());
-    assertTrue(started1);
-    assertTrue(started2);
-  }
+	@BeforeAll
+	static void before2(VertxTestContext context, Vertx vertx) {
+		LOGGER.info("Log4j (org.apache.log4j.Logger): Test info in @BeforeAll before2.");
+		int c = count.get();
+		boolean s = started1;
+		if (c == 1) {
+			assertTrue(s);
+		}
+		Checkpoint checkpoint = context.checkpoint();
+		vertx.setTimer(20, id -> {
+			started2 = true;
+			count.incrementAndGet();
+			checkpoint.flag();
+		});
+	}
+
+	@Test
+	void check_async_before_completed() {
+		LOGGER.info("Log4j (org.apache.log4j.Logger): Test info at the beginning of the @RepeatedTest test.");
+		assertEquals(2, count.get());
+		assertTrue(started1);
+		assertTrue(started2);
+		LOGGER.info("Log4j (org.apache.log4j.Logger): Test info at the ending of the @RepeatedTest test.");
+	}
 }

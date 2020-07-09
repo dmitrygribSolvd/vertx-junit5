@@ -1,13 +1,17 @@
 package examples;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 
+@Disabled
 class ExamplesTest {
-  @Nested
-  class ExamplesNested extends Examples {
-  }
+	@Disabled
+	@Nested
+	class ExamplesNested extends Examples {
+	}
 
-  @Nested
-  class LifecycleExampleTestNested extends LifecycleExampleTest {
-  }
+	@Disabled
+	@Nested
+	class LifecycleExampleTestNested extends LifecycleExampleTest {
+	}
 }

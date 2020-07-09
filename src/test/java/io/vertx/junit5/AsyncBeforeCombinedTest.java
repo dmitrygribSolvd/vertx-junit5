@@ -21,37 +21,45 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(VertxExtension.class)
 @DisplayName("Test @BeforeEach and @BeforeAll methods")
-class AsyncBeforeCombinedTest {
+public class AsyncBeforeCombinedTest {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(AsyncBeforeCombinedTest.class);
 
-  private static volatile int step;
+	private static volatile int step;
 
-  @BeforeAll
-  static void before_all(VertxTestContext context, Vertx vertx) {
-    assertEquals(0, step);
-    Checkpoint checkpoint = context.checkpoint();
-    vertx.setTimer(200, id -> {
-      step = 1;
-      checkpoint.flag();
-    });
-  }
+	@BeforeAll
+	static void before_all(VertxTestContext context, Vertx vertx) {
+		LOGGER.info("Logback (org.slf4j): Test info in @BeforeAll.");
+		assertEquals(0, step);
+		Checkpoint checkpoint = context.checkpoint();
+		vertx.setTimer(200, id -> {
+			step = 1;
+			checkpoint.flag();
+		});
+	}
 
-  @BeforeEach
-  void before_each(VertxTestContext context, Vertx vertx) {
-    assertEquals(1, step);
-    Checkpoint checkpoint = context.checkpoint();
-    vertx.setTimer(200, id -> {
-      step = 2;
-      checkpoint.flag();
-    });
-  }
+	@BeforeEach
+	void before_each(VertxTestContext context, Vertx vertx) {
+		LOGGER.info("Logback (org.slf4j): Test info in @BeforeEach.");
+		assertEquals(1, step);
+		Checkpoint checkpoint = context.checkpoint();
+		vertx.setTimer(200, id -> {
+			step = 2;
+			checkpoint.flag();
+		});
+	}
 
-  @Test
-  void check_async_before_completed() {
-    assertEquals(2, step);
-  }
+	@Test
+	void check_async_before_completed() {
+		LOGGER.info("Logback (org.slf4j): Test info at the beginning of the test.");
+		assertEquals(2, step);
+		LOGGER.info("Logback (org.slf4j): Test info at the ending of the test.");
+	}
 }

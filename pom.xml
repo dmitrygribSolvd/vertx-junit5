@@ -68,15 +68,41 @@
   <dependencies>
 
 	<dependency>
+		<groupId>org.junit.platform</groupId>
+		<artifactId>junit-platform-runner</artifactId>
+		<version>1.6.2</version>
+		<scope>test</scope>
+	</dependency>
+  
+	<dependency>
 		<groupId>com.zebrunner</groupId>
 		<artifactId>agent-junit5</artifactId>
 		<version>1.0.0.16-SNAPSHOT</version>
 	</dependency>
+	
 	<dependency>
 		<groupId>ch.qos.logback</groupId>
 		<artifactId>logback-classic</artifactId>
 		<version>1.2.3</version>
 	</dependency>
+	
+	<dependency>
+		<groupId>log4j</groupId>
+		<artifactId>log4j</artifactId>
+		<version>1.2.17</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.apache.logging.log4j</groupId>
+		<artifactId>log4j-api</artifactId>
+		<version>2.13.3</version>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.logging.log4j</groupId>
+		<artifactId>log4j-core</artifactId>
+		<version>2.13.3</version>
+	</dependency>
+	
   
     <dependency>
       <groupId>io.vertx</groupId>

@@ -77,7 +77,7 @@
 	<dependency>
 		<groupId>com.zebrunner</groupId>
 		<artifactId>agent-junit5</artifactId>
-		<version>1.0.0.16-SNAPSHOT</version>
+		<version>1.0.0.32-SNAPSHOT</version>
 	</dependency>
 	
 	<dependency>

@@ -1,11 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration>
-	<appender name="ReportingAppender" class="com.zebrunner.agent.core.appender.logback.ReportingAppender">
-	   <encoder>
-	      <pattern>%d{HH:mm:ss.SSS} [%t] %-5level - %msg%n</pattern>
-	   </encoder>
+<configuration debug="true">
+	​
+	<appender name="ReportingAppender"
+		class="com.zebrunner.agent.core.appender.logback.ReportingAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+			</pattern>
+		</encoder>
 	</appender>
-	<root level="info">
-	    <appender-ref ref="ReportingAppender" />
+	​
+	<appender name="STDOUT"
+		class="ch.qos.logback.core.ConsoleAppender">
+		<!-- encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder 
+			by default -->
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+	​
+	<logger name="com.zebrunner.agent" level="trace" />
+	​
+	<root level="debug">
+		<appender-ref ref="ReportingAppender" />
+		<appender-ref ref="STDOUT" />
 	</root>
 </configuration>
